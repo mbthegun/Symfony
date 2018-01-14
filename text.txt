@@ -2,3 +2,6 @@ ceci est un fichier text
  puis je l'est modifié
 
 encore une autre fois
+
+
+et la dernière
