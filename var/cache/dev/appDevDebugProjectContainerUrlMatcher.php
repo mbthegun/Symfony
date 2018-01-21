@@ -113,9 +113,31 @@ class appDevDebugProjectContainerUrlMatcher extends Symfony\Bundle\FrameworkBund
 
         }
 
-        // hello_the_world
-        if ('/hello-world' === $pathinfo) {
-            return array (  '_controller' => 'OC\\PlatformBundle\\Controller\\AdvertController::indexAction',  '_route' => 'hello_the_world',);
+        elseif (0 === strpos($pathinfo, '/platform')) {
+            // oc_platform_home
+            if ('/platform' === $trimmedPathinfo) {
+                if (substr($pathinfo, -1) !== '/') {
+                    return $this->redirect($pathinfo.'/', 'oc_platform_home');
+                }
+
+                return array (  '_controller' => 'OC\\PlatformBundle\\Controller\\AdvertController::indexAction',  '_route' => 'oc_platform_home',);
+            }
+
+            // oc_platform_view
+            if (0 === strpos($pathinfo, '/platform/advert') && preg_match('#^/platform/advert/(?P<id>[^/]++)$#s', $pathinfo, $matches)) {
+                return $this->mergeDefaults(array_replace($matches, array('_route' => 'oc_platform_view')), array (  '_controller' => 'OC\\PlatformBundle\\Controller\\AdvertController::viewAction',));
+            }
+
+            // oc_platform_add
+            if ('/platform/add' === $pathinfo) {
+                return array (  '_controller' => 'OC\\PlatformBundle\\Controller\\AdvertController::addAction',  '_route' => 'oc_platform_add',);
+            }
+
+            // oc_platform_view_slug
+            if (preg_match('#^/platform/(?P<year>\\d{4})/(?P<slug>[^/\\.]++)(?:\\.(?P<_format>html|xml))?$#s', $pathinfo, $matches)) {
+                return $this->mergeDefaults(array_replace($matches, array('_route' => 'oc_platform_view_slug')), array (  '_controller' => 'OC\\PlatformBundle\\Controller\\AdvertController::viewSlugAction',  '_format' => 'html',));
+            }
+
         }
 
         throw 0 < count($allow) ? new MethodNotAllowedException(array_unique($allow)) : new ResourceNotFoundException();
